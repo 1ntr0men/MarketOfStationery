@@ -5,8 +5,6 @@ from db import DB, UserModel, CartsModel, ProductModel
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'stationery'
 db = DB()
-users = UserModel(db.get_connection())
-users.insert('kuku', 'qwerty')
 
 
 @app.route('/')
