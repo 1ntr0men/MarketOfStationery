@@ -17,6 +17,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
+                {% if registered %}
+
                 <li class="nav-item active">
                     <a class="nav-link" href="/index">Store<span class="sr-only">(current)</span></a>
                 </li>
@@ -26,6 +28,17 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Sign out</a>
                 </li>
+
+                {% else %}
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="/login">Sign in<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/registry">Sign up<span class="sr-only">(current)</span></a>
+                </li>
+
+                {% endif %}
             </ul>
         </div>
     </nav>

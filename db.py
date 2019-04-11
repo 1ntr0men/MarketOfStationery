@@ -42,6 +42,12 @@ class UserModel:
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
 
+    def user_exists(self, user_name):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE user_name = ?", (user_name, ))
+        row = cursor.fetchone()
+        return (True, row[0]) if row else (False,)
+
 
 class ProductModel:
     def __init__(self, connection):
