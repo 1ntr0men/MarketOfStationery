@@ -42,7 +42,18 @@ def logout():
 
 @app.route("/carts")
 def carts():
-    pass
+    carts = CartsModel(db.get_connection()).get_all()
+    return render_template('carts.html', username=session['username'],
+                           carts=carts, product=None)
+
+
+@app.route("/add_basket/<int:product_id>")
+def add_basket(product_id):
+    product_model = ProductModel(db.get_connection())
+    item = product_model.get(product_id)
+    carts_model = CartsModel(db.get_connection())
+    carts_model.insert(session['user_id'], product_id, item[1], item[2], item[3], item[2] * item[3])
+    return redirect("/carts")
 
 
 if __name__ == "__main__":
