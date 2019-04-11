@@ -1,10 +1,15 @@
 {% extends "base.html" %}
- 
+
 {% block content %}
     <h1>Signing in</h1>
     {% if invalid %}
         <div class="alert alert-primary" role="alert">
-            Invalid login or password
+            Invalid format of password or password is not confirmed
+        </div>
+    {% endif %}
+    {% if exists %}
+        <div class="alert alert-primary" role="alert">
+            This user already exists
         </div>
     {% endif %}
     <form action="" method="post" novalidate>
@@ -21,13 +26,11 @@
         <p>
             {{ form.password.label }}<br>
             {{ form.password }}<br>
-            {% for error in form.password.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
         </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        <p>
+            {{ form.confirm_password.label }}<br>
+            {{ form.confirm_password }}<br>
+        </p>
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}

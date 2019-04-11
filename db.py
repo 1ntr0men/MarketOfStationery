@@ -48,6 +48,12 @@ class UserModel:
         row = cursor.fetchone()
         return row[0]
 
+    def user_exists(self, user_name):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE user_name = ?", (user_name, ))
+        row = cursor.fetchone()
+        return (True, row[0]) if row else (False,)
+
 
 class ProductModel:
     def __init__(self, connection):
@@ -133,4 +139,4 @@ class CartsModel:
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM carts WHERE id = ?''', (str(user_id),))
         cursor.close()
-        self.connection.commi()
+        self.connection.commit()
