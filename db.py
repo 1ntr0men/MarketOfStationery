@@ -105,7 +105,8 @@ class CartsModel:
     def init_table(self):
         cursor = self.connection.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS carts 
-                            (user_id INTEGER, 
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                             user_id INTEGER, 
                              product_id INTEGER,
                              product_name VARCHAR(128),
                              count INTEGER,
@@ -125,7 +126,7 @@ class CartsModel:
 
     def get(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM carts WHERE id = ?", (str(user_id),))
+        cursor.execute("SELECT * FROM carts WHERE user_id = ?", (str(user_id),))
         row = cursor.fetchone()
         return row
     
@@ -137,6 +138,12 @@ class CartsModel:
 
     def delete(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM carts WHERE id = ?''', (str(user_id),))
+        cursor.execute('''DELETE FROM carts WHERE user_id = ?''', (str(user_id),))
+        cursor.close()
+        self.connection.commit()
+
+    def delete_from_carts(self, carts_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM carts WHERE id = ?''', (str(carts_id),))
         cursor.close()
         self.connection.commit()

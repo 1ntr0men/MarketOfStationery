@@ -85,5 +85,12 @@ def add_basket(product_id):
     return redirect("/carts")
 
 
+@app.route("/delete_from_carts/<int:id>", methods=['GET'])
+def delete_from_basket(id):
+    carts = CartsModel(db.get_connection())
+    carts.delete_from_carts(id)
+    return redirect("/carts")
+
+
 if __name__ == "__main__":
     app.run("127.0.0.1", 8080, debug=True)
