@@ -120,4 +120,4 @@ class CartsModel:
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM carts WHERE id = ?''', (str(user_id),))
         cursor.close()
-        self.connection.commi()
+        self.connection.commit()
