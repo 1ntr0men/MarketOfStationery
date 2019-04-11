@@ -5,8 +5,6 @@ from db import DB, UserModel, CartsModel, ProductModel
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'stationery'
 db = DB()
-users = UserModel(db.get_connection())
-users.insert('kuku', 'qwerty')
 
 
 @app.route('/')
@@ -73,18 +71,7 @@ def registry():
 
 @app.route("/carts")
 def carts():
-    carts = CartsModel(db.get_connection()).get_all()
-    return render_template('carts.html', username=session['username'],
-                           carts=carts, product=None, registered=True)
-
-
-@app.route("/add_basket/<int:product_id>")
-def add_basket(product_id):
-    product_model = ProductModel(db.get_connection())
-    item = product_model.get(product_id)
-    carts_model = CartsModel(db.get_connection())
-    carts_model.insert(session['user_id'], product_id, item[1], item[2], item[3], item[2] * item[3])
-    return redirect("/carts")
+    pass
 
 
 if __name__ == "__main__":
