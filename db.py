@@ -41,6 +41,12 @@ class UserModel:
                        (user_name, password_hash))
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
+    
+    def get_id(self, user_name, password_hash):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM user WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
+        row = cursor.fetchone()
+        return row[0]
 
 
 class ProductModel:
@@ -95,6 +101,7 @@ class CartsModel:
         cursor.execute('''CREATE TABLE IF NOT EXISTS carts 
                             (user_id INTEGER, 
                              product_id INTEGER,
+                             product_name VARCHAR(128),
                              count INTEGER,
                              price INTEGER,
                              total INTEGER
@@ -102,11 +109,11 @@ class CartsModel:
         cursor.close()
         self.connection.commit()
 
-    def insert(self, user_id, product_id, count, price, total):
+    def insert(self, user_id, product_id, product_name, count, price, total):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO carts 
-                                  (user_id, product_id, count, price, total) 
-                                  VALUES (?,?,?,?)''', (user_id, product_id, count, price, total))
+                                  (user_id, product_id, product_name, count, price, total) 
+                                  VALUES (?,?,?,?,?,?)''', (user_id, product_id, product_name, count, price, total))
         cursor.close()
         self.connection.commit()
 
@@ -115,6 +122,12 @@ class CartsModel:
         cursor.execute("SELECT * FROM carts WHERE id = ?", (str(user_id),))
         row = cursor.fetchone()
         return row
+    
+    def get_all(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM carts")
+        rows = cursor.fetchall()
+        return rows
 
     def delete(self, user_id):
         cursor = self.connection.cursor()

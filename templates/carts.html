@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Ваша корзина, {{ username }}</h1>
+    {% for item in carts %}
+        <div class="alert alert-dark" role="alert">
+            <h2>{{item[2]}}</h2>
+            <div>Цена: {{item[4]}} Зарезервировано вами: {{item[3]}} В итоге: {{item[5]}}</div>
+
+        </div>
+    {% endfor %}
+    <a href="/add_basket">Купить</a>
+{% endblock %}
