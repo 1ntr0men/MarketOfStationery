@@ -87,10 +87,12 @@ def add_basket(product_id):
     return redirect('/index')
 
 
-@app.route("/delete_from_carts/<int:product_id>", methods=['GET'])
-def delete_from_basket(product_id):
-    carts = CartsModel(db.get_connection())
-    carts.delete_from_carts(product_id)
+@app.route("/delete_from_carts/<int:cart_id>", methods=['GET'])
+def delete_from_basket(cart_id):
+    product_id = carts_model.get_by_id(cart_id)
+    product_id = product_id[0][2]
+    product_model.change_reserv(product_id, -1)
+    carts_model.delete_from_carts(cart_id)
     return redirect("/carts")
 
 

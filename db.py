@@ -149,10 +149,9 @@ class CartsModel:
         rows = cursor.fetchall()
         return rows
 
-    def get_by_id(self, user_id, cart_id):
+    def get_by_id(self, cart_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM carts WHERE user_id = ? AND "
-                       "product_id = ?", (str(user_id), str(cart_id)))
+        cursor.execute("SELECT * FROM carts WHERE id = ?", (str(cart_id), ))
         row = cursor.fetchall()
         return row
 
