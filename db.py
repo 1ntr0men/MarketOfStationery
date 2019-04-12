@@ -71,11 +71,11 @@ class ProductModel:
         cursor.close()
         self.connection.commit()
 
-    def insert(self, name, count, price, reserv):
+    def insert(self, p_id, name, count, price, reserv):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO products 
-                          (name, count, price, reserv) 
-                          VALUES (?,?,?,?)''', (name, count, price, reserv))
+                          (id, name, count, price, reserv) 
+                          VALUES (?,?,?,?,?)''', (p_id, name, count, price, reserv))
         cursor.close()
         self.connection.commit()
 
@@ -96,6 +96,19 @@ class ProductModel:
         cursor.execute('''DELETE FROM products WHERE id = ?''', (str(product_id),))
         cursor.close()
         self.connection.commit()
+
+    def change_reserv(self, product_id, c):
+        cursor = self.connection.cursor()
+        if c > 0:
+            cursor.execute('''UPDATE products SET reserv = reserv + ? WHERE id = ?''', (c, str(product_id)))
+        else:
+            cursor.execute('''UPDATE products SET reserv = reserv - ? WHERE id = ?''', (abs(c), str(product_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def check_reserv(self, product_id):
+        item = self.get(product_id)
+        return item[2] >= item[4] + 1
 
 
 class CartsModel:
@@ -135,6 +148,13 @@ class CartsModel:
         cursor.execute("SELECT * FROM carts")
         rows = cursor.fetchall()
         return rows
+
+    def get_by_id(self, user_id, cart_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM carts WHERE user_id = ? AND "
+                       "product_id = ?", (str(user_id), str(cart_id)))
+        row = cursor.fetchall()
+        return row
 
     def delete(self, user_id):
         cursor = self.connection.cursor()

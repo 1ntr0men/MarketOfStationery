@@ -5,6 +5,9 @@ from db import DB, UserModel, CartsModel, ProductModel
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'stationery'
 db = DB()
+product_model = ProductModel(db.get_connection())
+user_model = UserModel(db.get_connection())
+carts_model = CartsModel(db.get_connection())
 
 
 @app.route('/')
@@ -12,7 +15,7 @@ db = DB()
 def index():
     if 'username' not in session:
         return redirect('/login')
-    product = ProductModel(db.get_connection()).get_all()
+    product = product_model.get_all()
     return render_template('index.html', username=session['username'],
                            product=product, title='Store', registered=True)
 
@@ -22,7 +25,6 @@ def login():
     form = LoginForm()
     user_name = form.username.data
     password = form.password.data
-    user_model = UserModel(db.get_connection())
     exists = user_model.exists(user_name, password)
     if request.method == 'GET':
         return render_template('login.html', title='Signing in', form=form)
@@ -49,7 +51,6 @@ def registry():
     user_name = form.username.data
     password = form.password.data
     confirm_password = form.confirm_password.data
-    user_model = UserModel(db.get_connection())
     exists = user_model.user_exists(user_name)
     if request.method == 'GET':
         return render_template('registry.html', title='Signing up', form=form)
@@ -71,25 +72,31 @@ def registry():
 
 @app.route("/carts")
 def carts():
-    carts = CartsModel(db.get_connection()).get(session['user_id'])
+    carts = carts_model.get(session['user_id'])
     return render_template('carts.html', username=session['username'],
                            carts=carts, product=None, registered=True)
 
 
 @app.route("/add_basket/<int:product_id>")
 def add_basket(product_id):
-    product_model = ProductModel(db.get_connection())
     item = product_model.get(product_id)
-    carts_model = CartsModel(db.get_connection())
-    carts_model.insert(session['user_id'], product_id, item[1], item[2], item[3], item[2] * item[3])
-    return redirect("/carts")
+    if product_model.check_reserv(product_id):
+        product_model.change_reserv(product_id, 1)
+        carts_model.insert(session['user_id'], product_id, item[1], 1, item[3], 1 * item[3])
+        return redirect("/carts")
+    return redirect('/index')
 
 
-@app.route("/delete_from_carts/<int:id>", methods=['GET'])
-def delete_from_basket(id):
+@app.route("/delete_from_carts/<int:product_id>", methods=['GET'])
+def delete_from_basket(product_id):
     carts = CartsModel(db.get_connection())
-    carts.delete_from_carts(id)
+    carts.delete_from_carts(product_id)
     return redirect("/carts")
+
+
+@app.route('/buy')
+def buy():
+    pass
 
 
 if __name__ == "__main__":
