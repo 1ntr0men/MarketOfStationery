@@ -69,27 +69,34 @@ def registry():
                 return redirect('/index')
 
 
-@app.route("/carts")
-def carts():
+@app.route(f"/carts/<user>")
+def carts(user):
     carts = CartsModel(db.get_connection()).get_all()
-    return render_template('carts.html', username=session['username'],
+    return render_template('carts.html', username=user,
                            carts=carts, product=None, registered=True)
 
 
-@app.route("/add_basket/<int:product_id>")
-def add_basket(product_id):
+@app.route(f"/carts/<user>/add_to_basket/<int:product_id>")
+def add_basket(user, product_id):
     product_model = ProductModel(db.get_connection())
     item = product_model.get(product_id)
     carts_model = CartsModel(db.get_connection())
-    carts_model.insert(session['user_id'], product_id, item[1], item[2], item[3], item[2] * item[3])
-    return redirect("/carts")
+    carts_model.insert(user, product_id, item[1], item[2], item[3], item[2] * item[3])
+    return redirect(f"/carts/{user}")
 
 
-@app.route("/delete_from_carts/<int:id>", methods=['GET'])
-def delete_from_basket(id):
+@app.route(f"/carts/<user>/delete_from_cart/<int:id>", methods=['GET'])
+def delete_from_basket(user, id):
     carts = CartsModel(db.get_connection())
     carts.delete_from_carts(id)
-    return redirect("/carts")
+    return redirect(f"/carts/{user}")
+
+
+@app.route(f"/carts/<user>/buy")
+def buy(user):
+    carts = CartsModel(db.get_connection())
+    carts.delete(user)
+    return redirect(f'/carts/{user}')
 
 
 if __name__ == "__main__":
