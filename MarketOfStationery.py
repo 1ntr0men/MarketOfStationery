@@ -78,11 +78,11 @@ def carts():
 
 
 @app.route("/add_basket/<int:product_id>")
-def add_basket(product_id):
+def add_basket(product_id, c=1):
     item = product_model.get(product_id)
     if product_model.check_reserv(product_id):
         product_model.change_reserv(product_id, 1)
-        carts_model.insert(session['user_id'], product_id, item[1], 1, item[3], 1 * item[3])
+        carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
         return redirect("/carts")
     return redirect('/index')
 
