@@ -4,6 +4,7 @@ db = DB()
 
 UserModel(db.get_connection()).init_table()
 UserModel(db.get_connection()).insert("user1", "password1")
+UserModel(db.get_connection()).insert("user2", "password2")
 
 ProductModel(db.get_connection()).init_table()
 ProductModel(db.get_connection()).insert("Карандаш", 5, 10, 0)

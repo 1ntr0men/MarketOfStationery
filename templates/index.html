@@ -6,7 +6,7 @@
         <div class="alert alert-dark" role="alert">
             <h2>{{item[1]}}</h2>
             <div>Цена: {{item[3]}} Количество на складе: {{item[2]}} Зарезервировано: {{item[4]}}</div>
-            <a href="/carts/{{username}}/add_to_basket/{{item[0]}}">Добавить в корзину</a>
+            <a href="/add_basket/{{item[0]}}">Добавить в корзину</a>
         </div>
     {% endfor %}
 {% endblock %}
