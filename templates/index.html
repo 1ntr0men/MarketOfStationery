@@ -7,6 +7,9 @@
             <h2>{{item[1]}}</h2>
             <div>Цена: {{item[3]}} Количество на складе: {{item[2]}} Зарезервировано: {{item[4]}}</div>
             <a href="/add_basket/{{item[0]}}">Добавить в корзину</a>
+            {% if admin %}
+                <a href="/delete/{{item[0]}}">Удалить товар с сайта</a>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}

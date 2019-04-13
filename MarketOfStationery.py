@@ -141,5 +141,11 @@ def new_product(data):
     return redirect('/index')
 
 
+@app.route("/delete/<product_id>")
+def delete(product_id):
+    product_model.delete(product_id)
+    return redirect("/index")
+
+
 if __name__ == "__main__":
     app.run("127.0.0.1", 8080, debug=True)
