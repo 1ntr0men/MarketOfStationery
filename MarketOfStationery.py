@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, session, jsonify, make_response
-from forms import LoginForm, RegistryForm
+from forms import LoginForm, RegistryForm, AddProductForm
 from db import DB, UserModel, CartsModel, ProductModel
 
 app = Flask(__name__)
@@ -30,13 +30,15 @@ def login():
     if request.method == 'GET':
         return render_template('login.html', title='Signing in', form=form)
     elif request.method == 'POST':
+        if not (user_name and password):
+            return render_template('login.html', title='Signing in',
+                                   form=form, empty=True)
         if exists[0]:
             session['username'] = user_name
             session['user_id'] = exists[1]
         else:
             return render_template('login.html', title='Signing in',
-                                   form=form, invalid=True,
-                                   admin=user_model.is_admin(session['username']))
+                                   form=form, invalid=True)
         return redirect("/index")
 
 
@@ -57,13 +59,16 @@ def registry():
     if request.method == 'GET':
         return render_template('registry.html', title='Signing up', form=form)
     else:
-        if exists[0]:
+        if not (user_name and password and confirm_password):
             return render_template('registry.html', title='Signing up', form=form,
-                                   exists=True, admin=user_model.is_admin(session['username']))
+                                   empty=True)
+        elif exists[0]:
+            return render_template('registry.html', title='Signing up', form=form,
+                                   exists=True)
         else:
             if password != confirm_password:
                 return render_template('registry.html', title='Signing up', form=form,
-                                       invalid=True, admin=user_model.is_admin(session['username']))
+                                       invalid=True)
             else:
                 user_model.insert(user_name, password, 0)
                 exists = user_model.user_exists(user_name)
@@ -111,6 +116,29 @@ def buy():
     carts_model.delete(session['user_id'])
     return render_template('buy.html', username=session['username'],
                            registered=True, admin=user_model.is_admin(session['username']))
+
+
+@app.route('/add_product', methods=['GET', 'POST'])
+def add_product():
+    form = AddProductForm()
+    name = form.name.data
+    count = form.count.data
+    price = form.price.data
+    if request.method == 'GET':
+        return render_template('add_product.html', title='Signing in', form=form,
+                               registered=True)
+    else:
+        if not (name and count and price):
+            return render_template('add_product.html', title='Signing in', form=form,
+                                   empty=True, registered=True)
+        return redirect(f"/add_product/{name}&{count}&{price}")
+
+
+@app.route('/add_product/<data>')
+def new_product(data):
+    name, count, price = data.split('&')
+    product_model.insert(name, count, price, 0)
+    return redirect('/index')
 
 
 if __name__ == "__main__":

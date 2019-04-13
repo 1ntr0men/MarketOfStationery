@@ -6,26 +6,19 @@
         <div class="alert alert-primary" role="alert">
             Неверный логин или пароль
         </div>
+    {% elif empty %}
+        <div class="alert alert-primary" role="alert">
+            Заполните все поля
+        </div>
     {% endif %}
     <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }}<br>
             {{ form.username }}<br>
-            {% for error in form.username.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
         </p>
         <p>
             {{ form.password.label }}<br>
             {{ form.password }}<br>
-            {% for error in form.password.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
         </p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit() }}</p>

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+    <h1>Добавить товар</h1>
+    {% if empty %}
+        <div class="alert alert-primary" role="alert">
+            Заполните все поля
+        </div>
+    {% endif %}
+    <form action="" method="post" novalidate>
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name }}<br>
+        </p>
+        <p>
+            {{ form.count.label }}<br>
+            {{ form.count }}<br>
+        </p>
+        <p>
+            {{ form.price.label }}<br>
+            {{ form.price }}<br>
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
