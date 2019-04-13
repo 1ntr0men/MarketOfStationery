@@ -22,16 +22,17 @@ class UserModel:
         cursor.execute('''CREATE TABLE IF NOT EXISTS users 
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                              user_name VARCHAR(50),
-                             password_hash VARCHAR(128)
+                             password_hash VARCHAR(128),
+                             admin INTEGER
                              )''')
         cursor.close()
         self.connection.commit()
 
-    def insert(self, user_name, password_hash):
+    def insert(self, user_name, password_hash, admin):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO users 
-                          (user_name, password_hash) 
-                          VALUES (?,?)''', (user_name, password_hash))
+                          (user_name, password_hash, admin) 
+                          VALUES (?,?,?)''', (user_name, password_hash, admin))
         cursor.close()
         self.connection.commit()
 
@@ -42,17 +43,23 @@ class UserModel:
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
 
-    def get_id(self, user_name, password_hash):
+    def get(self, user_name):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM user WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
+        cursor.execute("SELECT * FROM users WHERE user_name = ?", (user_name,))
         row = cursor.fetchone()
-        return row[0]
+        return row
 
     def user_exists(self, user_name):
-        cursor = self.connection.cursor()
-        cursor.execute('''SELECT * FROM users WHERE user_name = ?''', (user_name,))
-        row = cursor.fetchone()
+        row = self.get(user_name)
         return (True, row[0]) if row else (False,)
+
+    def is_admin(self, user_name):
+        item = self.get(user_name)
+        return bool(item[-1])
+
+    def delete_table(self):
+        cursor = self.connection.cursor()
+        cursor.execute('DROP TABLE users')
 
 
 class ProductModel:
@@ -114,7 +121,7 @@ class ProductModel:
             cursor.execute('''UPDATE products SET count = count - ? WHERE id = ?''', (abs(c), str(product_id)))
         cursor.close()
         self.connection.commit()
-    
+
     def reserv(self, product_id):
         cursor = self.connection.cursor()
         cursor.execute('''UPDATE products SET reserv = 0 WHERE id = ?''', (str(product_id),))
