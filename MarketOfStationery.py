@@ -17,7 +17,8 @@ def index():
         return redirect('/login')
     product = product_model.get_all()
     return render_template('index.html', username=session['username'],
-                           product=product, title='Store', registered=True)
+                           product=product, title='Store', registered=True,
+                           admin=user_model.is_admin(session['username']))
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -34,7 +35,8 @@ def login():
             session['user_id'] = exists[1]
         else:
             return render_template('login.html', title='Signing in',
-                                   form=form, invalid=True)
+                                   form=form, invalid=True,
+                                   admin=user_model.is_admin(session['username']))
         return redirect("/index")
 
 
@@ -57,13 +59,13 @@ def registry():
     else:
         if exists[0]:
             return render_template('registry.html', title='Signing up', form=form,
-                                   exists=True)
+                                   exists=True, admin=user_model.is_admin(session['username']))
         else:
             if password != confirm_password:
                 return render_template('registry.html', title='Signing up', form=form,
-                                       invalid=True)
+                                       invalid=True, admin=user_model.is_admin(session['username']))
             else:
-                user_model.insert(user_name, password)
+                user_model.insert(user_name, password, 0)
                 exists = user_model.user_exists(user_name)
                 session['username'] = user_name
                 session['user_id'] = exists[1]
@@ -74,7 +76,8 @@ def registry():
 def carts():
     carts = carts_model.get(session['user_id'])
     return render_template('carts.html', username=session['username'],
-                           carts=carts, product=None, registered=True)
+                           carts=carts, product=None, registered=True,
+                           admin=user_model.is_admin(session['username']))
 
 
 @app.route("/add_basket/<int:product_id>")
@@ -106,7 +109,8 @@ def buy():
         product_model.buy(i[2], i[4])
         product_model.reserv(i[2])
     carts_model.delete(session['user_id'])
-    return render_template('buy.html', username=session['username'], registered=True)
+    return render_template('buy.html', username=session['username'],
+                           registered=True, admin=user_model.is_admin(session['username']))
 
 
 if __name__ == "__main__":
