@@ -41,7 +41,7 @@ class UserModel:
                        (user_name, password_hash))
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
-    
+
     def get_id(self, user_name, password_hash):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM user WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
@@ -50,7 +50,7 @@ class UserModel:
 
     def user_exists(self, user_name):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE user_name = ?", (user_name, ))
+        cursor.execute('''SELECT * FROM users WHERE user_name = ?''', (user_name,))
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
 
@@ -71,23 +71,23 @@ class ProductModel:
         cursor.close()
         self.connection.commit()
 
-    def insert(self, p_id, name, count, price, reserv):
+    def insert(self, name, count, price, reserv):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO products 
-                          (id, name, count, price, reserv) 
-                          VALUES (?,?,?,?,?)''', (p_id, name, count, price, reserv))
+                          (name, count, price, reserv) 
+                          VALUES (?,?,?,?)''', (name, count, price, reserv))
         cursor.close()
         self.connection.commit()
 
     def get(self, product_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM products WHERE id = ?", (str(product_id),))
+        cursor.execute('''SELECT * FROM products WHERE id = ?''', (str(product_id),))
         row = cursor.fetchone()
         return row
 
     def get_all(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM products")
+        cursor.execute('''SELECT * FROM products''')
         rows = cursor.fetchall()
         return rows
 
@@ -103,6 +103,27 @@ class ProductModel:
             cursor.execute('''UPDATE products SET reserv = reserv + ? WHERE id = ?''', (c, str(product_id)))
         else:
             cursor.execute('''UPDATE products SET reserv = reserv - ? WHERE id = ?''', (abs(c), str(product_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def change_count(self, product_id, c):
+        cursor = self.connection.cursor()
+        if c > 0:
+            cursor.execute('''UPDATE products SET count = count + ? WHERE id = ?''', (c, str(product_id)))
+        else:
+            cursor.execute('''UPDATE products SET count = count - ? WHERE id = ?''', (abs(c), str(product_id)))
+        cursor.close()
+        self.connection.commit()
+    
+    def reserv(self, product_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''UPDATE products SET reserv = 0 WHERE id = ?''', (str(product_id),))
+        cursor.close()
+        self.connection.commit()
+
+    def buy(self, product_id, reserv):
+        cursor = self.connection.cursor()
+        cursor.execute('''UPDATE products SET count = count - ? WHERE id = ?''', (reserv, str(product_id)))
         cursor.close()
         self.connection.commit()
 
@@ -139,19 +160,19 @@ class CartsModel:
 
     def get(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM carts WHERE user_id = ?", (str(user_id),))
+        cursor.execute('''SELECT * FROM carts WHERE user_id = ?''', (str(user_id),))
         row = cursor.fetchall()
         return row
-    
+
     def get_all(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM carts")
+        cursor.execute('''SELECT * FROM carts''')
         rows = cursor.fetchall()
         return rows
 
     def get_by_id(self, cart_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM carts WHERE id = ?", (str(cart_id), ))
+        cursor.execute('''SELECT * FROM carts WHERE id = ?''', (str(cart_id),))
         row = cursor.fetchall()
         return row
 
@@ -164,5 +185,32 @@ class CartsModel:
     def delete_from_carts(self, carts_id):
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM carts WHERE id = ?''', (str(carts_id),))
+        cursor.close()
+        self.connection.commit()
+
+    def get_products(self, user_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''SELECT * FROM carts WHERE id = ?''', (str(user_id),))
+        row = cursor.fetchall()
+        m = []
+        for i in row:
+            m.append(i[2])
+        return m
+
+    def exists(self, user_id, product_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''SELECT * FROM carts WHERE user_id = ? AND product_id = ?''',
+                       (user_id, product_id))
+        row = cursor.fetchone()
+        return True if row else False
+
+    def change_reserv(self, product_id, c, user_id):
+        cursor = self.connection.cursor()
+        if c > 0:
+            cursor.execute('''UPDATE carts SET count = count + ? WHERE product_id = ? AND user_id = ?''',
+                           (c, str(product_id), user_id))
+        else:
+            cursor.execute('''UPDATE carts SET count = count - ? WHERE product_id = ? AND user_id = ?''',
+                           (abs(c), str(product_id), user_id))
         cursor.close()
         self.connection.commit()

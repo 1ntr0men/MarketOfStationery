@@ -82,7 +82,10 @@ def add_basket(product_id, c=1):
     item = product_model.get(product_id)
     if product_model.check_reserv(product_id):
         product_model.change_reserv(product_id, 1)
-        carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
+        carts_model.change_reserv(product_id, 1, session['user_id'])
+        if not carts_model.exists(session['user_id'], product_id):
+            carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
+            return redirect("/carts")
         return redirect("/carts")
     return redirect('/index')
 
@@ -98,7 +101,12 @@ def delete_from_basket(cart_id):
 
 @app.route('/buy')
 def buy():
-    pass
+    n = carts_model.get(session['user_id'])
+    for i in n:
+        product_model.buy(i[2], i[4])
+        product_model.reserv(i[2])
+    carts_model.delete(session['user_id'])
+    return render_template('buy.html', username=session['username'])
 
 
 if __name__ == "__main__":
