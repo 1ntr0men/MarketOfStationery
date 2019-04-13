@@ -106,7 +106,7 @@ def buy():
         product_model.buy(i[2], i[4])
         product_model.reserv(i[2])
     carts_model.delete(session['user_id'])
-    return render_template('buy.html', username=session['username'])
+    return render_template('buy.html', username=session['username'], registered=True)
 
 
 if __name__ == "__main__":
