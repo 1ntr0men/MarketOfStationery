@@ -77,9 +77,13 @@ def registry():
 @app.route("/carts")
 def carts():
     carts = carts_model.get(session['user_id'])
+    total = 0
+    for i in carts:
+        total += i[6]
     return render_template('carts.html', username=session['username'],
                            carts=carts, product=None, registered=True,
-                           admin=user_model.is_admin(session['username']))
+                           admin=user_model.is_admin(session['username']),
+                           total=total)
 
 
 @app.route("/add_basket/<int:product_id>/<int:c>")
@@ -91,6 +95,8 @@ def add_basket(product_id, c):
         carts_model.change_reserv(product_id, 1, session['user_id'])
         if not carts_model.exists(session['user_id'], product_id):
             carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
+            return redirect("/carts")
+        return redirect("/carts")
     return redirect('/index')
 
 
