@@ -89,7 +89,6 @@ def carts():
 @app.route("/add_basket/<int:product_id>/<int:c>")
 def add_basket(product_id, c):
     item = product_model.get(product_id)
-    print(item)
     if product_model.check_reserv(product_id):
         product_model.change_reserv(product_id, 1)
         carts_model.change_reserv(product_id, 1, session['user_id'])
@@ -112,12 +111,17 @@ def delete_from_basket(cart_id):
 @app.route('/buy')
 def buy():
     n = carts_model.get(session['user_id'])
+    carts = carts_model.get(session['user_id'])
+    price = 0
+    for i in carts:
+        price += i[6]
     for i in n:
         product_model.buy(i[2], i[4])
         product_model.reserv(i[2])
     carts_model.delete(session['user_id'])
     return render_template('buy.html', username=session['username'],
-                           registered=True, admin=user_model.is_admin(session['username']))
+                           registered=True, admin=user_model.is_admin(session['username']),
+                           price=price)
 
 
 @app.route('/add_product', methods=['GET', 'POST'])
