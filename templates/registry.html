@@ -2,21 +2,28 @@
 
 {% block content %}
     <h1>Signing in</h1>
-    {% if invalid %}
-        <div class="alert alert-primary" role="alert">
-            Вы не подтвердили пароль
-        </div>
-    {% elif empty %}
-        <div class="alert alert-primary" role="alert">
-            Заполните все поля
-        </div>
-    {% endif %}
     {% if exists %}
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-danger" role="alert">
             Этот пользователь уже есть
         </div>
     {% endif %}
     <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        {% for error in form.username.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+        {% endfor %}
+        {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+        {% endfor %}
+        {% for error in form.confirm_password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+        {% endfor %}
         <p>
             {{ form.username.label }}<br>
             {{ form.username }}<br>

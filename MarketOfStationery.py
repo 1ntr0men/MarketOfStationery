@@ -30,16 +30,16 @@ def login():
     if request.method == 'GET':
         return render_template('login.html', title='Signing in', form=form)
     elif request.method == 'POST':
+        if form.validate_on_submit():
+            if exists[0]:
+                session['username'] = user_name
+                session['user_id'] = exists[1]
+                return redirect("/index")
+            else:
+                return render_template('login.html', title='Signing in', form=form,
+                                       invalid=True)
         if not (user_name and password):
-            return render_template('login.html', title='Signing in',
-                                   form=form, empty=True)
-        if exists[0]:
-            session['username'] = user_name
-            session['user_id'] = exists[1]
-        else:
-            return render_template('login.html', title='Signing in',
-                                   form=form, invalid=True)
-        return redirect("/index")
+            return render_template('login.html', title='Signing in', form=form)
 
 
 @app.route('/logout')
@@ -59,22 +59,19 @@ def registry():
     if request.method == 'GET':
         return render_template('registry.html', title='Signing up', form=form)
     else:
-        if not (user_name and password and confirm_password):
-            return render_template('registry.html', title='Signing up', form=form,
-                                   empty=True)
-        elif exists[0]:
-            return render_template('registry.html', title='Signing up', form=form,
-                                   exists=True)
-        else:
-            if password != confirm_password:
+        if form.validate_on_submit():
+            if exists[0]:
+                return render_template('registry.html', title='Signing up', form=form,
+                                       exists=True)
+            elif password != confirm_password:
                 return render_template('registry.html', title='Signing up', form=form,
                                        invalid=True)
-            else:
-                user_model.insert(user_name, password, 0)
-                exists = user_model.user_exists(user_name)
-                session['username'] = user_name
-                session['user_id'] = exists[1]
-                return redirect('/index')
+            user_model.insert(user_name, password, 0)
+            exists = user_model.user_exists(user_name)
+            session['username'] = user_name
+            session['user_id'] = exists[1]
+            return redirect('/index')
+        return render_template('registry.html', title='Signing up', form=form)
 
 
 @app.route("/carts")
@@ -126,12 +123,12 @@ def add_product():
     price = form.price.data
     if request.method == 'GET':
         return render_template('add_product.html', title='Signing in', form=form,
-                               registered=True)
+                               registered=True, admin=user_model.is_admin(session['username']))
     else:
-        if not (name and count and price):
-            return render_template('add_product.html', title='Signing in', form=form,
-                                   empty=True, registered=True)
-        return redirect(f"/add_product/{name}&{count}&{price}")
+        if form.validate_on_submit():
+            return redirect(f"/add_product/{name}&{count}&{price}")
+        return render_template('add_product.html', title='Signing in', form=form,
+                               registered=True, admin=user_model.is_admin(session['username']))
 
 
 @app.route('/add_product/<data>')
