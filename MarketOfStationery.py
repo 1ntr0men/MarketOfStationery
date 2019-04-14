@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, session, jsonify, make_response
-from forms import LoginForm, RegistryForm, AddProductForm
+from forms import LoginForm, RegistryForm, AddProductForm, CountForm
 from db import DB, UserModel, CartsModel, ProductModel
 
 app = Flask(__name__)
@@ -15,10 +15,11 @@ carts_model = CartsModel(db.get_connection())
 def index():
     if 'username' not in session:
         return redirect('/login')
+    form = CountForm()
     product = product_model.get_all()
     return render_template('index.html', username=session['username'],
                            product=product, title='Store', registered=True,
-                           admin=user_model.is_admin(session['username']))
+                           admin=user_model.is_admin(session['username']), form=form)
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -38,8 +39,7 @@ def login():
             else:
                 return render_template('login.html', title='Signing in', form=form,
                                        invalid=True)
-        if not (user_name and password):
-            return render_template('login.html', title='Signing in', form=form)
+        return render_template('login.html', title='Signing in', form=form)
 
 
 @app.route('/logout')
@@ -82,16 +82,15 @@ def carts():
                            admin=user_model.is_admin(session['username']))
 
 
-@app.route("/add_basket/<int:product_id>")
-def add_basket(product_id, c=1):
+@app.route("/add_basket/<int:product_id>/<int:c>")
+def add_basket(product_id, c):
     item = product_model.get(product_id)
+    print(item)
     if product_model.check_reserv(product_id):
         product_model.change_reserv(product_id, 1)
         carts_model.change_reserv(product_id, 1, session['user_id'])
         if not carts_model.exists(session['user_id'], product_id):
             carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
-            return redirect("/carts")
-        return redirect("/carts")
     return redirect('/index')
 
 
@@ -142,6 +141,29 @@ def new_product(data):
 def delete(product_id):
     product_model.delete(product_id)
     return redirect("/index")
+
+
+@app.route('/new_basket/<product_id>', methods=['GET', 'POST'])
+def new_basket(product_id):
+    item = product_model.get(product_id)
+    form = CountForm()
+    if request.method == 'GET':
+        return render_template('new_basket.html',
+                               admin=user_model.is_admin(session['username']),
+                               registered=True, form=form, item=item)
+    else:
+        count = item[2] - item[4]
+        input_count = form.count.data
+        if form.validate_on_submit():
+            if input_count > count:
+                return render_template('new_basket.html',
+                                       admin=user_model.is_admin(session['username']),
+                                       registered=True, form=form, item=item,
+                                       invalid=True)
+            return redirect(f'/add_basket/{item[0]}/{input_count}')
+        return render_template('new_basket.html',
+                               admin=user_model.is_admin(session['username']),
+                               registered=True, form=form, item=item)
 
 
 if __name__ == "__main__":

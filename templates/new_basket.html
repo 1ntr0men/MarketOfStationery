@@ -1,0 +1,38 @@
+{% extends "Base.html" %}
+
+{% block content %}
+<h1>Информация о товаре</h1>
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        Название: {{item[1]}}
+    </p>
+    <p>
+        Количество на складе: {{item[2]}}
+    </p>
+    <p>
+        Зарезервировано: {{item[4]}}
+    </p>
+    <p>
+        Цена за штуку: {{item[3]}}
+    </p>
+    <p>
+        Вы можете заказть {{item[2] - item[4]}} единиц товара
+    </p>
+    <p>
+        {{ form.count.label }}<br>
+        {{ form.count }}<br>
+    </p>
+    <p>{{ form.submit() }}</p>
+    {% for error in form.count.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    {% if invalid %}
+    <div class="alert alert-danger" role="alert">
+        Ваше количество превышает допустимый предел
+    </div>
+    {% endif %}
+</form>
+{% endblock %}

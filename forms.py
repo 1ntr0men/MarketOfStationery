@@ -24,3 +24,9 @@ class AddProductForm(FlaskForm):
     price = IntegerField('Стоимость (руб)', [validators.DataRequired('Укажите цену товара'),
                                              validators.NumberRange(min=1)])
     submit = SubmitField('Добавить')
+
+
+class CountForm(FlaskForm):
+    count = IntegerField('Количество', [validators.DataRequired('Укажите количество товара'),
+                                        validators.NumberRange(min=1)])
+    submit = SubmitField('Добавить в корзину')
