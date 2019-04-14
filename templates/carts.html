@@ -6,11 +6,11 @@
         <div class="alert alert-dark" role="alert">
             <h2>{{item[3]}}</h2>
             <div>Цена: {{item[5]}} Зарезервировано вами: {{item[4]}} В итоге: {{item[6]}}рублей</div>
-            <a href="/delete_from_carts/{{item[0]}}">Удалить из корзины</a>
+            <a href="/delete_from_carts/{{item[0]}}" class="btn btn-danger">Удалить из корзины</a>
         </div>
     {% endfor %}
     {% if carts %}
-    <a href="/buy">Купить</a>
+    <a href="/buy" class="btn btn-success">Купить</a>
     <div>Итог: {{total}}</div>
     {% else %}
     <h3>Пусто :(</h3>
