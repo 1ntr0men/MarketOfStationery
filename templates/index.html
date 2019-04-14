@@ -1,12 +1,32 @@
-{% extends "base.html" %}
+{% extends "Base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ username }}</h1>
-    {% for item in product %}
-        <div class="alert alert-dark" role="alert">
-            <h2>{{item[1]}}</h2>
-            <div>{{item[2]}}</div>
-            <a href="/add_basket/{{item[0]}}">Add to basket</a>
-        </div>
-    {% endfor %}
+<h1>Привет, {{ username }}</h1>
+<form action="" method="post" novalidate>
+    <br>
+    <br>
+    <h3>
+        {{ filter_form.radio.label }}
+    </h3>
+    <p>
+        {{ filter_form.radio }}
+    </p>
+    <p>{{ filter_form.submit() }}</p>
+    <br>
+    <br>
+</form>
+{% for item in product %}
+<div class="alert alert-dark" role="alert">
+    <h2>{{item[1]}}</h2>
+    <div>Цена: {{item[3]}} | Количество на складе: {{item[2]}} | Зарезервировано: {{item[4]}}</div>
+    <a href="/new_basket/{{item[0]}}" class="btn btn-light" data-toggle="modal">
+        Добавить в корзину
+    </a>
+    {% if admin %}
+    <a href="/delete/{{item[0]}}" class="btn btn-danger">
+        Удалить товар
+    </a>
+    {% endif %}
+</div>
+{% endfor %}
 {% endblock %}

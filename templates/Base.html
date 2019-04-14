@@ -7,14 +7,46 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>{{title}}</title>
 </head>
-  <body>
-    <header>
-      <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">Stationery Store</a>
-      </nav>
-    </header>
-    <main role="main" class="container">
-        {% block content %}{% endblock %}
-    </main>
-  </body>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Канцелярские товары</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if registered %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/index/none">Магазин<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/carts">Корзина</a>
+                </li>
+                {% if admin %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/add_product">Новый товар</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Выйти</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Войти<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/registry">Регистрация<span class="sr-only">(current)</span></a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>
+<main role="main" class="container">
+    <br>
+    {% block content %}{% endblock %}
+</main>
+</body>
 </html>
