@@ -140,6 +140,7 @@ def new_product(data):
 @app.route("/delete/<product_id>")
 def delete(product_id):
     product_model.delete(product_id)
+    carts_model.delete_by_product(product_id)
     return redirect("/index")
 
 

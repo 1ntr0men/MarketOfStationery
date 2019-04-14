@@ -195,9 +195,15 @@ class CartsModel:
         cursor.close()
         self.connection.commit()
 
+    def delete_by_product(self, product_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM carts WHERE product_id = ?''', (str(product_id),))
+        cursor.close()
+        self.connection.commit()
+
     def get_products(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('''SELECT * FROM carts WHERE id = ?''', (str(user_id),))
+        cursor.execute('''SELECT * FROM carts WHERE user_id = ?''', (str(user_id),))
         row = cursor.fetchall()
         m = []
         for i in row:
