@@ -6,7 +6,6 @@ from wtforms import IntegerField, validators
 class LoginForm(FlaskForm):
     username = StringField('Логин', [validators.DataRequired('Введите логин')])
     password = PasswordField('Пароль', [validators.DataRequired('Введите пароль')])
-    remember_me = BooleanField('Запомнить')
     submit = SubmitField('Войти')
 
 
