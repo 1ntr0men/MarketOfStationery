@@ -2,6 +2,19 @@
 
 {% block content %}
 <h1>Привет, {{ username }}</h1>
+<form action="" method="post" novalidate>
+    <br>
+    <br>
+    <h3>
+        {{ filter_form.radio.label }}
+    </h3>
+    <p>
+        {{ filter_form.radio }}
+    </p>
+    <p>{{ filter_form.submit() }}</p>
+    <br>
+    <br>
+</form>
 {% for item in product %}
 <div class="alert alert-dark" role="alert">
     <h2>{{item[1]}}</h2>

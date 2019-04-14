@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms import IntegerField, validators
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms import IntegerField, RadioField, validators
 
 
 class LoginForm(FlaskForm):
@@ -29,3 +29,12 @@ class CountForm(FlaskForm):
     count = IntegerField('Количество', [validators.DataRequired('Укажите количество товара'),
                                         validators.NumberRange(min=1)])
     submit = SubmitField('Добавить в корзину')
+
+
+class FilterForm(FlaskForm):
+    radio = RadioField('Фильтр', choices=[('none', 'Нет'), ('alphabet', 'По алфавиту'),
+                                          ('reversed_alphabet', 'По алфавиту (в обратном порядке)'),
+                                          ('price', 'По возрастанию цены'),
+                                          ('reversed_price', 'По убыванию цены')],
+                       default='none')
+    submit = SubmitField('Установить фильтр')
