@@ -106,11 +106,10 @@ def carts():
 @app.route("/add_basket/<int:product_id>/<int:c>")
 def add_basket(product_id, c):
     item = product_model.get(product_id)
-    if product_model.check_reserv(product_id):
-        product_model.change_reserv(product_id, c)
-        carts_model.change_reserv(product_id, c, session['user_id'])
-        if not carts_model.exists(session['user_id'], product_id):
-            carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
+    product_model.change_reserv(product_id, c)
+    carts_model.change_reserv(product_id, c, session['user_id'])
+    if not carts_model.exists(session['user_id'], product_id):
+        carts_model.insert(session['user_id'], product_id, item[1], c, item[3], c * item[3])
     return redirect('/index/none')
 
 

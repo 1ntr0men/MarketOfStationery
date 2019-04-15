@@ -19,9 +19,11 @@
 <div class="alert alert-dark" role="alert">
     <h2>{{item[1]}}</h2>
     <div>Цена: {{item[3]}} | Количество на складе: {{item[2]}} | Зарезервировано: {{item[4]}}</div>
+    {% if not item[2] == item[4] %}
     <a href="/new_basket/{{item[0]}}" class="btn btn-light" data-toggle="modal">
         Добавить в корзину
     </a>
+    {% endif %}
     {% if admin %}
     <a href="/delete/{{item[0]}}" class="btn btn-danger">
         Удалить товар

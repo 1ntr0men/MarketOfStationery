@@ -134,10 +134,6 @@ class ProductModel:
         cursor.close()
         self.connection.commit()
 
-    def check_reserv(self, product_id):
-        item = self.get(product_id)
-        return item[2] >= item[4] + 1
-
 
 class CartsModel:
     def __init__(self, connection):
