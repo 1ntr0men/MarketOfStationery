@@ -116,8 +116,9 @@ def add_basket(product_id, c):
 @app.route("/delete_from_carts/<int:cart_id>", methods=['GET'])
 def delete_from_basket(cart_id):
     product_id = carts_model.get_by_id(cart_id)
+    c = product_id[0][4]
     product_id = product_id[0][2]
-    product_model.change_reserv(product_id, -1)
+    product_model.change_reserv(product_id, -c)
     carts_model.delete_from_carts(cart_id)
     return redirect("/carts")
 
